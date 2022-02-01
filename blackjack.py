@@ -41,8 +41,9 @@ class Player:
     # Add card to cards list
     def add_card(self, card):
         self.cards.append(card)
-        self.value = card.value
+        # self.value = card.value
     def score(self):
+        self.total = 0
         for card in self.cards:
             self.total += int(card.value)
             # print(f'total is: {self.total}')
@@ -110,65 +111,65 @@ class Game:
             game_over = False
             while not game_over:
                 # Check if either dealer or player hits Blackjack
-                dealer_hit_blackjack = self.is_blackjack()
-                player_hit_blackjack = self.is_blackjack()
-                if dealer_hit_blackjack or player_hit_blackjack:
+                dealer_hit_blackjack, human_hit_blackjack = self.is_blackjack()
+                if dealer_hit_blackjack or human_hit_blackjack:
                     game_over = True
-                    self.show_result(dealer_hit_blackjack, player_hit_blackjack)
+                    self.show_result(dealer_hit_blackjack, human_hit_blackjack)
                     continue
                 user_choice = input("Would you like to [Hit / Stand]").lower()
                 while user_choice not in ['h', 'hit', 's', 'stand']:
                     user_choice = input(f'Please enter h / s or hit / stand').lower()
                 if user_choice == 'h' or 'hit':
-                    self.human.add_card(Deck.deal_one())
+                    self.human.add_card(self.deck.deal_one())
                     self.human.display_cards()
                     if self.player_loses():
                         print("You Lose :(")
                         game_over = True
                 else:
-                    player_card_total = Human.score()
-                    dealer_card_total = Dealer.score()
+                    player_card_total = self.human.score()
+                    dealer_card_total = self.dealer.score()
 
                     print("Final Results")
                     print("Your score:", player_card_total)
                     print("Dealer Score:", dealer_card_total)
 
-                    if player_card_total > dealer_card_total:
+                    if player_card_total > dealer_card_total and player_card_total <= 21:
                         print("You Win!")
                     elif player_card_total == dealer_card_total:
                         print("It's a Draw!")
                     else:
                         print("You Lose :(")
                     game_over = True
-                # Ask the user if they want to play again
-                second_try = input("Would you like to play again? [Y/N]").lower()
-                while second_try not in ['y','n']:
-                    second_try =  input("Please enter Y or N ").lower
-                if second_try == 'n':
-                    print("Thanks for playing")
-                    playing = False
-                else:
-                    game_over = False
+                
+            # Ask the user if they want to play again
+            second_try = input("Would you like to play again? [Y/N]").lower()
+            while second_try not in ['y','n']:
+                second_try =  input("Please enter Y or N ").lower
+            if second_try == 'n':
+                print("Thanks for playing")
+                playing = False
+            else:
+                game_over = False
     def player_loses(self):
-        return self.human.score > 21    
+        if self.human.score() > 21:
+            return True
     # Check if Player or Dealer has Blackjack
     def is_blackjack(self):
-        player = False
+        human = False
         dealer = False
         if self.human.score() == 21:
-            player = True
+            human = True
         if self.dealer.score() == 21:
             dealer = True
-        return player, dealer
+        return human, dealer
     # Show result of game
     def show_result(self, player_hit_blackjack, dealer_hit_blackjack):
-        if player_hit_blackjack and dealer_hit_blackjack:
-            print(f'Both players have blackjack! It\'s a Draw!')
-        elif player_hit_blackjack:
+        if player_hit_blackjack:
             print(f'Player has blackjack! You Win!')
         elif dealer_hit_blackjack:
             print("Dealer has blackjack! You Lose :(")
-
+        elif player_hit_blackjack and dealer_hit_blackjack:
+            print(f'Both players have blackjack! It\'s a Draw!')
 
 def main():
     start_game = Game()
