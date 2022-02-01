@@ -119,7 +119,7 @@ class Game:
                 user_choice = input("Would you like to [Hit / Stand]").lower()
                 while user_choice not in ['h', 'hit', 's', 'stand']:
                     user_choice = input(f'Please enter h / s or hit / stand').lower()
-                if user_choice == 'h' or 'hit':
+                if user_choice == 'h' or user_choice == 'hit':
                     self.human.add_card(self.deck.deal_one())
                     self.human.display_cards()
                     if self.player_loses():
@@ -133,7 +133,7 @@ class Game:
                     print("Your score:", player_card_total)
                     print("Dealer Score:", dealer_card_total)
 
-                    if player_card_total > dealer_card_total and player_card_total <= 21:
+                    if player_card_total > dealer_card_total:
                         print("You Win!")
                     elif player_card_total == dealer_card_total:
                         print("It's a Draw!")
@@ -144,7 +144,7 @@ class Game:
             # Ask the user if they want to play again
             second_try = input("Would you like to play again? [Y/N]").lower()
             while second_try not in ['y','n']:
-                second_try =  input("Please enter Y or N ").lower
+                second_try =  input("Please enter Y or N ").lower()
             if second_try == 'n':
                 print("Thanks for playing")
                 playing = False
